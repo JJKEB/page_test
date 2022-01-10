@@ -73,3 +73,75 @@ Change theme 버튼을 클릭하면 테마를 선택하여 설치할수 있는 �
 다른 정적웹사이트와 달리 [Jekyll](https://jekyllrb.com/) 의 경우 GitHub Pages 에서 공식 지원중이기 때문에
 
 저장소에 push 하면 Html 등의 파일로 자동 빌드되어 화면에 보여지게 된다.
+
+
+2. 상품 리스트에서 상품 선택 order 상품 삭제 로직 만들기
+    1. order 상태를 가지고 있어야 하기 때문에 전역상태를 설정해주기 위해서
+    context 를 만들고 context 에 데이터를 주입하기 위해서 프로바이더 만들기
+    2. src/contexts 폴더 생성
+        1. AppStateContext.jsx 파일 생성후 React.createContext() 인스턴스 생성 하고
+        export defalt 로 createContext 인스턴스인 **AppStateContext** 을 내보내 줍니다.
+            
+            ```jsx
+            import React from 'react';
+            
+            const AppStateContext = React.createContext();
+            export default AppStateContext;
+            ```
+            
+    3. src/providers 폴더 생성
+        1. AppStateProvider.jsx 파일 생성후 AppStateProvider 함수 생성하고
+        contexts/AppStateContext.jsx 의 **AppStateContext** 을 받아 key 로 Provider 를 부여하고 리턴 합니다.
+            
+            ```jsx
+            import { useState, useCallback } from 'react';
+            import AppStateContext from '../contexts/AppStateContext';
+            
+            const AppStateProvider = ({ children }) => {
+              const [prototypes] = useState([
+                {
+                  id: 'pp-01',
+                  title: 'Kids-story',
+                  artist: 'Thomas Buisson',
+                  desc: 'This prototype was made with ProtoPie, the interactive prototyping tool for all digital products.',
+                  thumbnail: 'https://prototype-shop.s3.ap-northeast-2.amazonaws.com/thumbnails/Kids-story_1.mp4',
+                  price: 10,
+                  pieUrl: 'https://cloud.protopie.io/p/8a6461ad85',
+                },
+            // ------------------------- 데이터 중간 생략 ------------------------------ //
+                {
+                  id: 'pp-12',
+                  title: 'Voice Note',
+                  artist: 'Haerin Song',
+                  desc: `Made by Haerin Song
+                          (Soda Design)`,
+                  thumbnail: 'https://prototype-shop.s3.ap-northeast-2.amazonaws.com/thumbnails/Voice_note_with_sound_wave.mp4',
+                  price: 90,
+                  pieUrl: 'https://cloud.protopie.io/p/7a0d6567d2',
+                },
+              ]);
+              const [orders, setOrders] = useState([]);
+              const addToOrder = useCallback((id) => {}, []);
+              const remove = useCallback((id) => {}, []);
+              const removeAll = useCallback(() => {}, []);
+            
+              return (
+                <AppStateContext.Provider     // <= **AppStateContext** 을 받아 key 로 Provider 를 부여
+                  value={{                    // <= 데이터 값과, 필요 함수들을 value 로 넣어줍니다.
+                    prototypes,
+                    setOrders,
+                    orders,
+                    addToOrder,
+                    remove,
+                    removeAll,
+                  }}
+                >
+                  {children}            // children 이건 뭘까...?
+                </AppStateContext.Provider>
+              );
+            };
+            
+            export default AppStateProvider;
+            ```
+            
+    4.
